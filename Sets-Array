@@ -1,0 +1,152 @@
+// Online C compiler to run C program online
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int arr[10];
+    int count;
+}Sets;
+
+void insert(Sets*,int);
+void del(Sets*,int);
+int find(Sets*,int);
+int isfull(Sets*);
+int isempty(Sets*);
+Sets unionset(Sets*,Sets*);
+Sets inter(Sets*,Sets*);
+Sets diff(Sets*,Sets*);
+
+int main() {
+    Sets* A = malloc(sizeof(Sets));
+    A->count=0;
+    A->arr[A->count];
+    
+    Sets* B = malloc(sizeof(Sets));
+    B->count=0;
+    B->arr[B->count];
+    
+    insert(A,0);
+    insert(A,1);
+    insert(A,2);
+    insert(A,3);
+    insert(A,4);
+    
+    insert(B,3);
+    insert(B,4);
+    insert(B,5);
+    insert(B,6);
+    insert(B,7);
+    
+    for(int x=0;x!=A->count;x++)printf("%d ",A->arr[x]);
+    printf("\n");
+    for(int x=0;x!=B->count;x++)printf("%d ",B->arr[x]);
+    printf("\n");
+    
+    Sets* C = malloc(sizeof(Sets));
+    *C = unionset(A,B);
+    
+    Sets* D = malloc(sizeof(Sets));
+    *D = inter(A,B);
+    
+    Sets* E = malloc(sizeof(Sets));
+    *E = diff(A,B);
+    
+    printf("\n");
+    for(int x=0;x!=C->count;x++)printf("%d ",C->arr[x]);
+    printf("\n");
+    for(int x=0;x!=D->count;x++)printf("%d ",D->arr[x]);
+    printf("\n");
+    for(int x=0;x!=E->count;x++)printf("%d ",E->arr[x]);
+    
+    
+    return 0;
+}
+
+int isfull(Sets* set){
+    return set->count==10;
+}
+
+int isempty(Sets* set){
+    return set->count==0;
+}
+
+void insert(Sets* set,int num){
+    if(isfull(set)==1){
+        printf("FULL\n");
+        return;
+    }
+    
+    set->count++;
+    set->arr[set->count-1] = num;
+}
+
+void del(Sets* set,int num){
+    if(isempty(set)==1){
+        printf("EMPTY\n");
+        return;
+    }
+    int x;
+    for(x=0;x<=set->count && set->arr[x]!=num;x++){}
+    
+    memcpy(&set->arr[x],&set->arr[x+1],sizeof(int)*set->count-x);
+    set->count--;
+}
+
+int find(Sets* set, int num){
+    for(int x=0;x<set->count;x++){
+        if(set->arr[x]==num)return 1;
+    }
+    return 0;
+}
+
+Sets unionset(Sets* A, Sets* B){
+    int a,b;
+    Sets* C = malloc(sizeof(Sets));
+    C->count=0;
+    
+    for(a=0;a<A->count;a++){
+        C->arr[a] = A->arr[a];
+        C->count++;
+    }
+    for(b=0;b<10;b++){
+        if(find(C,B->arr[b])==0 && isfull(C)==0){
+            C->arr[C->count] = B->arr[b];
+            C->count++;
+        }
+    }
+    
+    return *C;
+}
+
+Sets inter(Sets* A, Sets* B){
+    int a,b;
+    Sets* C = malloc(sizeof(Sets));
+    C->count=0;
+    
+    for(a=0;a<A->count;a++){
+        for(b=0;b<B->count;b++){
+            if(A->arr[a]==B->arr[b]){
+                C->arr[C->count] = B->arr[b];
+                C->count++;
+            }
+        }
+    }
+    return *C;
+    
+}
+
+Sets diff(Sets* A, Sets* B){
+    int a,b;
+    Sets* C = malloc(sizeof(Sets));
+    C->count=0;
+   
+    for(b=0;b<B->count;b++){
+        if(find(A,B->arr[b])==0 && isfull(C)==0){
+            C->arr[C->count] = B->arr[b];
+            C->count++;
+        }
+    }
+    
+    return *C;
+}
